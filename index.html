@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choosy the Chatbot</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #FFFFFF;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #BB86FC;
+      text-align: center;
+    }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      width: 500px;
+      max-width: 90%;
+      background-color: #1E1E1E;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .chat-container:hover {
+      transform: scale(1.05);
+    }
+
+    .messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      max-height: 400px;
+    }
+
+    .message {
+      background-color: #2C2C2C;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .message.user {
+      background-color: #BB86FC;
+      color: #121212;
+      align-self: flex-end;
+    }
+
+    form {
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      flex-grow: 1;
+      padding: 10px;
+      border: 2px solid #BB86FC;
+      background-color: #1E1E1E;
+      color: #FFFFFF;
+      margin-right: 10px;
+      border-radius: 5px;
+      transition: border-color 0.3s ease-in-out;
+    }
+
+    input:focus {
+      border-color: #03DAC6;
+      outline: none;
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #BB86FC;
+      color: #121212;
+      cursor: pointer;
+      transition: background-color 0.3s ease-in-out;
+    }
+
+    button:hover {
+      background-color: #3700B3;
+    }
+
+    footer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: #757575;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <h1>Choosy the Chatbot</h1>
+    <div class="messages" id="messages"></div>
+    <form id="chat-form">
+      <input type="text" id="message" placeholder="Type your message here" required>
+      <button type="submit">Send</button>
+    </form>
+    <footer>Powered by Choosy's AI • Designed by Choosy</footer>
+  </div>
+  <script>
+    document.getElementById('chat-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const message = document.getElementById('message').value;
+      const responseBox = document.createElement('div');
+      responseBox.classList.add('message', 'user');
+      responseBox.innerText = message;
+      document.getElementById('messages').appendChild(responseBox);
+      document.getElementById('message').value = '';
+
+      const response = await fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: message })
+      });
+      const data = await response.json();
+
+      const botResponseBox = document.createElement('div');
+      botResponseBox.classList.add('message');
+      botResponseBox.innerText = data.reply;
+      document.getElementById('messages').appendChild(botResponseBox);
+      document.getElementById('messages').scrollTop = document.getElementById('messages').scrollHeight;
+    });
+  </script>
+</body>
+</html>
